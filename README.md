@@ -5,6 +5,33 @@ I built this project to train a MuJoCo car agent to reach a target sphere using 
 
 The environment is defined in `car.xml`, training happens in `train.py`, and visualization/inference happens in `main.py`.
 
+## Prerequisites (Install First)
+
+### System
+- Python 3.10+ (I tested on Python 3.12)
+- `pip3`
+
+### Python Packages
+I install dependencies using:
+
+```bash
+pip3 install -r requirements.txt
+```
+
+If you want to install manually instead:
+
+```bash
+pip3 install numpy matplotlib torch mujoco
+```
+
+### Optional (recommended) virtual environment
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip3 install --upgrade pip
+pip3 install -r requirements.txt
+```
+
 ## What Was Wrong in the Original Version
 When I started from the original code, the behavior looked random in simulation and the car often did not actually reach the sphere even when the training curve looked like it was improving.
 
