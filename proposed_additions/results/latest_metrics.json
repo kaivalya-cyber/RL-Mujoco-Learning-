@@ -1,0 +1,19 @@
+{
+  "generated_utc": "2026-03-03T01:38:22+00:00",
+  "git_commit": "cbbda54",
+  "fixed_goal": {
+    "episodes": 30,
+    "success_rate": 0.7333333333333333,
+    "avg_final_distance": 0.19382545328446948,
+    "avg_return": 157.38653692840938,
+    "avg_episode_length": 1893.9333333333334
+  },
+  "arbitrary_goal": {
+    "episodes": 30,
+    "success_rate": 0.6666666666666666,
+    "avg_final_distance": 0.2618443469735806,
+    "avg_return": 125.8594870494014,
+    "avg_episode_length": 1543.8333333333333,
+    "goal_sampling": "random"
+  }
+}
