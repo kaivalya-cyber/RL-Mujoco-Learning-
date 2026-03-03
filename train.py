@@ -1,5 +1,8 @@
 import argparse
+import os
 import random
+
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/mplconfig")
 
 import matplotlib
 
@@ -252,7 +255,13 @@ def save_learning_curve(
     plt.close(fig)
 
 
-def train(total_episodes=4000, max_episode_steps=2200, eval_every=100):
+def train(
+    total_episodes=4000,
+    max_episode_steps=2200,
+    eval_every=100,
+    checkpoint_path="car_reinforce_policy.pt",
+    curve_path="car_learning_curve.png",
+):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     env = Cars(max_episode_steps=max_episode_steps, random_start=False)
     eval_env = Cars(max_episode_steps=max_episode_steps, random_start=False)
@@ -369,18 +378,16 @@ def train(total_episodes=4000, max_episode_steps=2200, eval_every=100):
             "avg_final_distance": float("inf"),
         }
 
-    checkpoint_path = "car_reinforce_policy.pt"
     torch.save(best_state, checkpoint_path)
-    plot_path = "car_learning_curve.png"
     save_learning_curve(
         episode_returns,
         eval_episodes,
         eval_success_rates,
         eval_final_distances,
-        plot_path,
+        curve_path,
     )
     print(f"Saved best policy checkpoint to {checkpoint_path}")
-    print(f"Saved learning curve plot to {plot_path}")
+    print(f"Saved learning curve plot to {curve_path}")
     print(
         f"Best eval success_rate={best_state['success_rate']:.2f}, "
         f"avg_final_distance={best_state['avg_final_distance']:.3f}"
@@ -392,9 +399,13 @@ if __name__ == "__main__":
     parser.add_argument("--episodes", type=int, default=4000)
     parser.add_argument("--max-episode-steps", type=int, default=2200)
     parser.add_argument("--eval-every", type=int, default=100)
+    parser.add_argument("--checkpoint", type=str, default="car_reinforce_policy.pt")
+    parser.add_argument("--curve", type=str, default="car_learning_curve.png")
     args = parser.parse_args()
     train(
         total_episodes=args.episodes,
         max_episode_steps=args.max_episode_steps,
         eval_every=args.eval_every,
+        checkpoint_path=args.checkpoint,
+        curve_path=args.curve,
     )

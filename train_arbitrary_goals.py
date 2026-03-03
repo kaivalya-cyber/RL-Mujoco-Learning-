@@ -1,6 +1,9 @@
 import argparse
 import json
+import os
 import random
+
+os.environ.setdefault("MPLCONFIGDIR", "/tmp/mplconfig")
 
 import matplotlib
 
@@ -269,7 +272,14 @@ def save_curve(train_returns, eval_eps, eval_success, eval_dist, path):
     plt.close(fig)
 
 
-def train(total_episodes=5000, max_episode_steps=2200, eval_every=100):
+def train(
+    total_episodes=5000,
+    max_episode_steps=2200,
+    eval_every=100,
+    checkpoint_path="car_arbitrary_goal_policy.pt",
+    curve_path="car_arbitrary_goal_curve.png",
+    summary_path="car_arbitrary_goal_eval.json",
+):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     random.seed(1)
     np.random.seed(1)
@@ -383,11 +393,7 @@ def train(total_episodes=5000, max_episode_steps=2200, eval_every=100):
             "goal_mode": "arbitrary",
         }
 
-    ckpt_path = "car_arbitrary_goal_policy.pt"
-    curve_path = "car_arbitrary_goal_curve.png"
-    summary_path = "car_arbitrary_goal_eval.json"
-
-    torch.save(best_ckpt, ckpt_path)
+    torch.save(best_ckpt, checkpoint_path)
     save_curve(train_returns, eval_eps, eval_success, eval_dist, curve_path)
     with open(summary_path, "w", encoding="utf-8") as f:
         json.dump(
@@ -400,7 +406,7 @@ def train(total_episodes=5000, max_episode_steps=2200, eval_every=100):
             indent=2,
         )
 
-    print(f"Saved checkpoint: {ckpt_path}")
+    print(f"Saved checkpoint: {checkpoint_path}")
     print(f"Saved curve: {curve_path}")
     print(f"Saved eval summary: {summary_path}")
 
@@ -410,9 +416,15 @@ if __name__ == "__main__":
     parser.add_argument("--episodes", type=int, default=5000)
     parser.add_argument("--max-episode-steps", type=int, default=2200)
     parser.add_argument("--eval-every", type=int, default=100)
+    parser.add_argument("--checkpoint", type=str, default="car_arbitrary_goal_policy.pt")
+    parser.add_argument("--curve", type=str, default="car_arbitrary_goal_curve.png")
+    parser.add_argument("--summary", type=str, default="car_arbitrary_goal_eval.json")
     args = parser.parse_args()
     train(
         total_episodes=args.episodes,
         max_episode_steps=args.max_episode_steps,
         eval_every=args.eval_every,
+        checkpoint_path=args.checkpoint,
+        curve_path=args.curve,
+        summary_path=args.summary,
     )
