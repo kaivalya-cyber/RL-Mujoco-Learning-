@@ -1,0 +1,18 @@
+{
+  "generated_utc": "2026-03-03T01:13:33+00:00",
+  "git_commit": "4a97efc",
+  "fixed_goal": {
+    "episodes": 30,
+    "success_rate": 0.7333333333333333,
+    "avg_final_distance": 0.19382545328446948,
+    "avg_return": 157.38653692840938,
+    "avg_episode_length": 1893.9333333333334
+  },
+  "arbitrary_goal_grid": {
+    "episodes": 24,
+    "success_rate": 0.75,
+    "avg_final_distance": 0.2439090676534135,
+    "avg_return": 140.5934609596094,
+    "avg_episode_length": 1720.4166666666667
+  }
+}
