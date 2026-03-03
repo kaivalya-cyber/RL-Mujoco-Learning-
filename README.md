@@ -129,3 +129,17 @@ After training, I expect:
 
 ## Notes
 This version is focused on making behavior in simulation match what the metrics claim. The main goal of these updates was to make learning curves honest and make the car consistently reach the target sphere.
+
+## New Objective Add-on: Arbitrary Goal Locations
+I also added a next-step objective where the policy is trained to reach many goal positions (not just one fixed goal).
+
+New files:
+- `train_arbitrary_goals.py`
+- `main_arbitrary_goals.py`
+- `ARBITRARY_GOAL_OBJECTIVE.md`
+
+Quick start:
+```bash
+python3 train_arbitrary_goals.py --episodes 3000 --max-episode-steps 2200 --eval-every 100
+python3 main_arbitrary_goals.py --policy car_arbitrary_goal_policy.pt
+```
