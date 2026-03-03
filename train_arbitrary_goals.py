@@ -272,6 +272,13 @@ def save_curve(train_returns, eval_eps, eval_success, eval_dist, path):
     plt.close(fig)
 
 
+def load_config(path):
+    if not path:
+        return {}
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
 def train(
     total_episodes=5000,
     max_episode_steps=2200,
@@ -413,18 +420,44 @@ def train(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--episodes", type=int, default=5000)
-    parser.add_argument("--max-episode-steps", type=int, default=2200)
-    parser.add_argument("--eval-every", type=int, default=100)
-    parser.add_argument("--checkpoint", type=str, default="car_arbitrary_goal_policy.pt")
-    parser.add_argument("--curve", type=str, default="car_arbitrary_goal_curve.png")
-    parser.add_argument("--summary", type=str, default="car_arbitrary_goal_eval.json")
+    parser.add_argument("--config", type=str, default=None)
+    parser.add_argument("--episodes", type=int, default=None)
+    parser.add_argument("--max-episode-steps", type=int, default=None)
+    parser.add_argument("--eval-every", type=int, default=None)
+    parser.add_argument("--checkpoint", type=str, default=None)
+    parser.add_argument("--curve", type=str, default=None)
+    parser.add_argument("--summary", type=str, default=None)
     args = parser.parse_args()
+
+    cfg = load_config(args.config)
+    episodes = args.episodes if args.episodes is not None else cfg.get("episodes", 5000)
+    max_episode_steps = (
+        args.max_episode_steps
+        if args.max_episode_steps is not None
+        else cfg.get("max_episode_steps", 2200)
+    )
+    eval_every = args.eval_every if args.eval_every is not None else cfg.get("eval_every", 100)
+    checkpoint = (
+        args.checkpoint
+        if args.checkpoint is not None
+        else cfg.get("checkpoint", "car_arbitrary_goal_policy.pt")
+    )
+    curve = (
+        args.curve
+        if args.curve is not None
+        else cfg.get("curve", "car_arbitrary_goal_curve.png")
+    )
+    summary = (
+        args.summary
+        if args.summary is not None
+        else cfg.get("summary", "car_arbitrary_goal_eval.json")
+    )
+
     train(
-        total_episodes=args.episodes,
-        max_episode_steps=args.max_episode_steps,
-        eval_every=args.eval_every,
-        checkpoint_path=args.checkpoint,
-        curve_path=args.curve,
-        summary_path=args.summary,
+        total_episodes=episodes,
+        max_episode_steps=max_episode_steps,
+        eval_every=eval_every,
+        checkpoint_path=checkpoint,
+        curve_path=curve,
+        summary_path=summary,
     )

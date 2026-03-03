@@ -5,6 +5,19 @@ I built this project to train a MuJoCo car agent to reach a target sphere using 
 
 The environment is defined in `car.xml`, training happens in `train.py`, and visualization/inference happens in `main.py`.
 
+## Demo GIFs
+I added two policy demo GIFs (generated from real rollout trajectories):
+- Fixed-goal policy demo: `media/fixed_goal_demo.gif`
+- Arbitrary-goal policy demo: `media/arbitrary_goal_demo.gif`
+
+![Fixed Goal Demo](media/fixed_goal_demo.gif)
+![Arbitrary Goal Demo](media/arbitrary_goal_demo.gif)
+
+If GIF files are missing, generate them with:
+```bash
+python3 generate_demo_gifs.py
+```
+
 ## Prerequisites (Install First)
 
 ### System
@@ -21,7 +34,7 @@ pip3 install -r requirements.txt
 If you want to install manually instead:
 
 ```bash
-pip3 install numpy matplotlib torch mujoco
+pip3 install numpy matplotlib pillow torch mujoco
 ```
 
 ### Optional (recommended) virtual environment
@@ -47,6 +60,21 @@ To make this easier to run consistently across environments, I added:
     - `--curve`
     - `--summary`
   - This lets me run smoke tests without overwriting main project artifacts.
+
+## Config-Based Training (New)
+I added JSON config support so experiments are reproducible and easy to rerun.
+
+Config files:
+- `configs/fixed_goal_base.json`
+- `configs/arbitrary_goal_base.json`
+
+Examples:
+```bash
+python3 train.py --config configs/fixed_goal_base.json
+python3 train_arbitrary_goals.py --config configs/arbitrary_goal_base.json
+```
+
+CLI flags still work and override config values if provided.
 
 ## What Was Wrong in the Original Version
 When I started from the original code, the behavior looked random in simulation and the car often did not actually reach the sphere even when the training curve looked like it was improving.
@@ -174,6 +202,21 @@ python3 train_arbitrary_goals.py --episodes 3000 --max-episode-steps 2200 --eval
   --curve /tmp/my_arb_curve.png \
   --summary /tmp/my_arb_eval.json
 ```
+
+## Results Tracking (New)
+I added a standardized evaluator script:
+- `evaluate_models.py`
+
+This writes reproducible metrics to:
+- `results/latest_metrics.json`
+- `results/latest_metrics.md`
+
+Run it with:
+```bash
+python3 evaluate_models.py
+```
+
+I can rerun this anytime after training to refresh the metrics table.
 
 ## Testing I Ran Before Push
 I ran these checks locally before pushing:

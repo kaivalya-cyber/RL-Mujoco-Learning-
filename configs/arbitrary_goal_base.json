@@ -1,0 +1,8 @@
+{
+  "episodes": 3000,
+  "max_episode_steps": 2200,
+  "eval_every": 100,
+  "checkpoint": "car_arbitrary_goal_policy.pt",
+  "curve": "car_arbitrary_goal_curve.png",
+  "summary": "car_arbitrary_goal_eval.json"
+}

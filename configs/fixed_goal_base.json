@@ -1,0 +1,7 @@
+{
+  "episodes": 300,
+  "max_episode_steps": 2200,
+  "eval_every": 50,
+  "checkpoint": "car_reinforce_policy.pt",
+  "curve": "car_learning_curve.png"
+}
