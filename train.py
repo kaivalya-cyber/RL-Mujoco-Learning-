@@ -1,9 +1,5 @@
 import argparse
-import json
-import os
 import random
-
-os.environ.setdefault("MPLCONFIGDIR", "/tmp/mplconfig")
 
 import matplotlib
 
@@ -256,20 +252,7 @@ def save_learning_curve(
     plt.close(fig)
 
 
-def load_config(path):
-    if not path:
-        return {}
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-def train(
-    total_episodes=4000,
-    max_episode_steps=2200,
-    eval_every=100,
-    checkpoint_path="car_reinforce_policy.pt",
-    curve_path="car_learning_curve.png",
-):
+def train(total_episodes=4000, max_episode_steps=2200, eval_every=100):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     env = Cars(max_episode_steps=max_episode_steps, random_start=False)
     eval_env = Cars(max_episode_steps=max_episode_steps, random_start=False)
@@ -386,16 +369,18 @@ def train(
             "avg_final_distance": float("inf"),
         }
 
+    checkpoint_path = "car_reinforce_policy.pt"
     torch.save(best_state, checkpoint_path)
+    plot_path = "car_learning_curve.png"
     save_learning_curve(
         episode_returns,
         eval_episodes,
         eval_success_rates,
         eval_final_distances,
-        curve_path,
+        plot_path,
     )
     print(f"Saved best policy checkpoint to {checkpoint_path}")
-    print(f"Saved learning curve plot to {curve_path}")
+    print(f"Saved learning curve plot to {plot_path}")
     print(
         f"Best eval success_rate={best_state['success_rate']:.2f}, "
         f"avg_final_distance={best_state['avg_final_distance']:.3f}"
@@ -404,33 +389,12 @@ def train(
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default=None)
-    parser.add_argument("--episodes", type=int, default=None)
-    parser.add_argument("--max-episode-steps", type=int, default=None)
-    parser.add_argument("--eval-every", type=int, default=None)
-    parser.add_argument("--checkpoint", type=str, default=None)
-    parser.add_argument("--curve", type=str, default=None)
+    parser.add_argument("--episodes", type=int, default=4000)
+    parser.add_argument("--max-episode-steps", type=int, default=2200)
+    parser.add_argument("--eval-every", type=int, default=100)
     args = parser.parse_args()
-
-    cfg = load_config(args.config)
-    episodes = args.episodes if args.episodes is not None else cfg.get("episodes", 4000)
-    max_episode_steps = (
-        args.max_episode_steps
-        if args.max_episode_steps is not None
-        else cfg.get("max_episode_steps", 2200)
-    )
-    eval_every = args.eval_every if args.eval_every is not None else cfg.get("eval_every", 100)
-    checkpoint = (
-        args.checkpoint
-        if args.checkpoint is not None
-        else cfg.get("checkpoint", "car_reinforce_policy.pt")
-    )
-    curve = args.curve if args.curve is not None else cfg.get("curve", "car_learning_curve.png")
-
     train(
-        total_episodes=episodes,
-        max_episode_steps=max_episode_steps,
-        eval_every=eval_every,
-        checkpoint_path=checkpoint,
-        curve_path=curve,
+        total_episodes=args.episodes,
+        max_episode_steps=args.max_episode_steps,
+        eval_every=args.eval_every,
     )
